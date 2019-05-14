@@ -1,10 +1,10 @@
-package object
+package encoded
 
 import (
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/pkg/errors"
-	"my-kit/store/raw"
+	"github.com/shousper/my-kit/store/raw"
 )
 
 func NewProtoStore(store raw.Store) *DefaultStore {
@@ -54,7 +54,7 @@ func protoMarshal(in interface{}) ([]byte, error) {
 	case nil:
 		return nil, nil
 	}
-	return nil, errors.Errorf("invalid proto bro: %t", in)
+	return nil, errors.Errorf("invalid proto: %t", in)
 }
 
 func protoUnmarshal(data []byte, out interface{}) error {
@@ -109,6 +109,5 @@ func protoUnmarshal(data []byte, out interface{}) error {
 	case nil:
 		return nil
 	}
-	return errors.Errorf("invalid proto bro: %t", out)
+	return errors.Errorf("invalid proto: %t", out)
 }
-

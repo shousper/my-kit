@@ -1,11 +1,12 @@
-package raw_test
+package local_test
 
 import (
 	"testing"
 	"time"
 
-	"my-kit/store/raw"
-	"my-kit/store/raw/test"
+	"github.com/shousper/my-kit/store/raw"
+	"github.com/shousper/my-kit/store/raw/local"
+	"github.com/shousper/my-kit/store/raw/test"
 )
 
 /*
@@ -37,9 +38,9 @@ BenchmarkNewFreeCacheStore/Iterate_1000000/16-4            -
 func BenchmarkNewFreeCacheStore(b *testing.B) {
 	b.SkipNow()
 
-	test.Benchmark(b, func() raw.Store { return raw.NewFreeCacheStore(2 * 1024 * 1024 * 1024, 1 * time.Second) })
+	test.Benchmark(b, func() raw.Store { return local.NewFreeCacheStore(2*1024*1024*1024, 1*time.Second) })
 }
 
 func TestNewFreeCacheStore(t *testing.T) {
-	test.GCStress(t, func() raw.Store { return raw.NewFreeCacheStore(2 * 1024 * 1024 * 1024, 1 * time.Second) })
+	test.GCStress(t, func() raw.Store { return local.NewFreeCacheStore(2*1024*1024*1024, 1*time.Second) })
 }

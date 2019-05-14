@@ -1,6 +1,6 @@
 package object
 
-type IndexerFunc func(entity interface{}) (key string)
+type IndexerFunc func(entity Value) (key string)
 
 type IndexedStore struct {
 	Store
@@ -22,7 +22,7 @@ func (s *IndexedStore) Index(name string, indexer IndexerFunc) *IndexedStore {
 	return s
 }
 
-func (s *IndexedStore) Set(key string, entry interface{}) error {
+func (s *IndexedStore) Set(key string, entry Value) error {
 	if err := s.Store.Set(key, entry); err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func (s *IndexedStore) Set(key string, entry interface{}) error {
 	return nil
 }
 
-func (s *IndexedStore) GetBy(index string, inAndOut interface{}) error {
+func (s *IndexedStore) GetBy(index string, inAndOut Value) error {
 	indexKey := s.indexers[index](inAndOut)
 	var key string
 	if err := s.Store.Get(indexKey, &key); err != nil {
@@ -42,4 +42,3 @@ func (s *IndexedStore) GetBy(index string, inAndOut interface{}) error {
 	}
 	return s.Store.Get(key, inAndOut)
 }
-

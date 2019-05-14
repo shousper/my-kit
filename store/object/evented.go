@@ -1,8 +1,8 @@
 package object
 
-import "my-kit/store/raw"
+import "github.com/shousper/my-kit/store/raw"
 
-type EventCallback func(key string, value interface{})
+type EventCallback func(key string, value Value)
 
 type EventedStore struct {
 	Store
@@ -24,13 +24,13 @@ func (s *EventedStore) On(event raw.Event, fn EventCallback) {
 	s.callbacks[event] = append(s.callbacks[event], fn)
 }
 
-func (s *EventedStore) emit(event raw.Event, key string, value interface{}) {
+func (s *EventedStore) emit(event raw.Event, key string, value Value) {
 	for _, fn := range s.callbacks[event] {
 		fn(key, value)
 	}
 }
 
-func (s *EventedStore) Get(key string, out interface{}) error {
+func (s *EventedStore) Get(key string, out Value) error {
 	if key == "" {
 		return ErrInvalidKey
 	}
@@ -40,7 +40,7 @@ func (s *EventedStore) Get(key string, out interface{}) error {
 	s.emit(raw.EventAfterGet, key, out)
 	return err
 }
-func (s *EventedStore) Set(key string, in interface{}) error {
+func (s *EventedStore) Set(key string, in Value) error {
 	if key == "" {
 		return ErrInvalidKey
 	}

@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"testing"
 
-	"my-kit/store/raw"
+	"github.com/shousper/my-kit/store/raw"
 )
 
 func profileMemory(fn func(t *testing.T)) func(t *testing.T) {
@@ -114,10 +114,14 @@ func GCStress(t *testing.T, fn func() raw.Store) {
 
 			profileMemory(func(t *testing.T) {
 				for i := 0; i < cfg.capacity; i++ {
-					_ = set.Iterate(func(key string, value []byte) (b bool, e error) {
+					it := set.Iterate()
+					for {
+						value, ok := it.Next()
+						if !ok {
+							break
+						}
 						result = value
-						return true, nil
-					})
+					}
 				}
 			})(t)
 		})

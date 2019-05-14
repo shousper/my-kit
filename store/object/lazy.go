@@ -1,31 +1,27 @@
 package object
 
-import (
-	"my-kit/store/raw"
-)
-
 type LazyStore struct {
 	Store
 
-	getter func(key string) (interface{}, error)
+	getter func(key string) (Value, error)
 }
 
 var _ Store = (*LazyStore)(nil)
 
-func NewLazyStore(store Store, getter func(key string) (interface{}, error)) *LazyStore {
+func NewLazyStore(store Store, getter func(key string) (Value, error)) *LazyStore {
 	return &LazyStore{
 		Store:  store,
 		getter: getter,
 	}
 }
 
-func (s *LazyStore) Set(key string, in interface{}) error {
+func (s *LazyStore) Set(key string, in Value) error {
 	return s.Store.Set(key, in)
 }
 
-func (s *LazyStore) Get(key string, out interface{}) error {
+func (s *LazyStore) Get(key string, out Value) error {
 	err := s.Store.Get(key, out)
-	if err == raw.ErrNotFound {
+	if err == ErrNotFound {
 		entry, err := s.getter(key)
 		if err != nil {
 			return err
@@ -37,4 +33,3 @@ func (s *LazyStore) Get(key string, out interface{}) error {
 	}
 	return err
 }
-

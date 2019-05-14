@@ -1,10 +1,11 @@
 package raw_test
 
 import (
+	"github.com/shousper/my-kit/store/raw/local"
 	"testing"
 
-	"my-kit/store/raw"
-	"my-kit/store/raw/test"
+	"github.com/shousper/my-kit/store/raw"
+	"github.com/shousper/my-kit/store/raw/test"
 )
 
 /*
@@ -38,11 +39,11 @@ func BenchmarkNewEventedStore(b *testing.B) {
 	//b.SkipNow()
 
 	i := 0
-	op := func(key string, value []byte) {
+	op := func(key string, value raw.Value) {
 		i++
 	}
 	test.Benchmark(b, func() raw.Store {
-		store := raw.NewEventedStore(raw.NewDefaultStore())
+		store := raw.NewEventedStore(local.NewDefaultStore())
 		store.On(raw.EventBeforeGet, op)
 		store.On(raw.EventBeforeSet, op)
 		store.On(raw.EventBeforeDelete, op)
@@ -410,11 +411,11 @@ func BenchmarkNewEventedStore(b *testing.B) {
 */
 func TestNewEventedStore(t *testing.T) {
 	i := 0
-	op := func(key string, value []byte) {
+	op := func(key string, value raw.Value) {
 		i++
 	}
 	test.GCStress(t, func() raw.Store {
-		store := raw.NewEventedStore(raw.NewDefaultStore())
+		store := raw.NewEventedStore(local.NewDefaultStore())
 		store.On(raw.EventBeforeGet, op)
 		store.On(raw.EventBeforeSet, op)
 		store.On(raw.EventBeforeDelete, op)

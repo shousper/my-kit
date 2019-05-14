@@ -5,8 +5,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"my-kit/store/raw"
-
+	"github.com/shousper/my-kit/store/raw"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -101,10 +100,14 @@ func Benchmark(b *testing.B, fn func() raw.Store) {
 
 			b.ResetTimer()
 			for i := 0; i < b.N; i++ {
-				_ = set.Iterate(func(key string, value []byte) (b bool, e error) {
+				it := set.Iterate()
+				for {
+					value, ok := it.Next()
+					if !ok {
+						break
+					}
 					result = value
-					return true, nil
-				})
+				}
 			}
 		})
 	}

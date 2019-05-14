@@ -4,8 +4,9 @@ import (
 	"math/rand"
 	"testing"
 
-	"my-kit/store/raw"
-	"my-kit/store/raw/test"
+	"github.com/shousper/my-kit/store/raw"
+	"github.com/shousper/my-kit/store/raw/local"
+	"github.com/shousper/my-kit/store/raw/test"
 )
 
 /*
@@ -38,15 +39,15 @@ BenchmarkNewLazyStore/Iterate_1000000/1024-4            	 5000000	       676 ns/
 func BenchmarkNewLazyStore(b *testing.B) {
 	//b.SkipNow()
 
-	data := make([][]byte, 1000)
+	data := make([]raw.Value, 1000)
 	for i := 0; i < 1000; i++ {
-		data[i] = make([]byte, 16)
+		data[i] = make(raw.Value, 16)
 		rand.Read(data[i])
 	}
 
 	i := -1
 	test.Benchmark(b, func() raw.Store {
-		return raw.NewLazyStore(raw.NewDefaultStore(), func(key string) (bytes []byte, e error) {
+		return raw.NewLazyStore(local.NewDefaultStore(), func(key string) (bytes raw.Value, e error) {
 			i++
 			return data[i], nil
 		})
@@ -54,15 +55,15 @@ func BenchmarkNewLazyStore(b *testing.B) {
 }
 
 func TestNewLazyStore(t *testing.T) {
-	data := make([][]byte, 1000)
+	data := make([]raw.Value, 1000)
 	for i := 0; i < 1000; i++ {
-		data[i] = make([]byte, 16)
+		data[i] = make(raw.Value, 16)
 		rand.Read(data[i])
 	}
 
 	i := -1
 	test.GCStress(t, func() raw.Store {
-		return raw.NewLazyStore(raw.NewDefaultStore(), func(key string) (bytes []byte, e error) {
+		return raw.NewLazyStore(local.NewDefaultStore(), func(key string) (bytes raw.Value, e error) {
 			i++
 			return data[i], nil
 		})

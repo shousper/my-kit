@@ -1,54 +1,64 @@
 package store
 
 import (
-	"my-kit/store/object"
-	"my-kit/store/raw"
+	"github.com/shousper/my-kit/store/object"
+	"github.com/shousper/my-kit/store/object/encoded"
+	"github.com/shousper/my-kit/store/object/generic"
+	"github.com/shousper/my-kit/store/raw"
+	"github.com/shousper/my-kit/store/raw/local"
+	"github.com/shousper/my-kit/store/raw/remote"
 )
 
 type Store = raw.Store
 
 var (
-	// NewStore defaults to bigcache 🤷‍
-	NewStore = NewBigCacheStore
-
 	/* Store implementations */
-	NewMapStore = raw.NewDefaultStore
-	NewBigCacheStore = raw.NewBigCacheStore
+
+	NewMapRawStore           = local.NewDefaultStore
+	NewBigCacheRawStore      = local.NewBigCacheStore
+	NewConcurrentMapRawStore = local.NewConcurrentMapStore
+	NewFreeCacheRawStore     = local.NewFreeCacheStore
+
+	NewRedisRawStore = remote.NewRedisStore
 
 	/* Feature wrappers */
-	NewLazyStore = raw.NewLazyStore
-	NewEventedStore = raw.NewEventedStore
-	NewChanneledStore = raw.NewChanneledStore
+	NewLazyRawStore    = raw.NewLazyStore
+	NewEventedRawStore = raw.NewEventedStore
 )
 
 type ObjectStore = object.Store
 
 var (
 	/* Store implementations */
-	NewObjectStore = object.NewStore
+	NewGenericObjectStore = generic.NewStore
+	NewLRU2QObjectStore   = generic.NewLRU2QStore
+
+	NewEncodedObjectStore          = encoded.NewStore
+	NewGobEncodedObjectStore       = encoded.NewGobStore
+	NewGogoProtoEncodedObjectStore = encoded.NewGogoProtoStore
+	NewProtoEncodedObjectStore     = encoded.NewProtoStore
+	NewJSONEncodedObjectStore      = encoded.NewJSONStore
 
 	/* Feature wrappers */
-	NewLazyObjectStore = object.NewLazyStore
+	NewLazyObjectStore    = object.NewLazyStore
 	NewEventedObjectStore = object.NewEventedStore
-	NewChanneledObjectStore = object.NewChanneledStore
 	NewIndexedObjectStore = object.NewIndexedStore
 )
 
 type Event = raw.Event
 
 var (
-	EventBeforeGet = raw.EventBeforeGet
-	EventAfterGet = raw.EventAfterGet
-	EventBeforeSet = raw.EventBeforeSet
-	EventAfterSet = raw.EventAfterSet
+	EventBeforeGet    = raw.EventBeforeGet
+	EventAfterGet     = raw.EventAfterGet
+	EventBeforeSet    = raw.EventBeforeSet
+	EventAfterSet     = raw.EventAfterSet
 	EventBeforeDelete = raw.EventBeforeDelete
-	EventAfterDelete = raw.EventAfterDelete
-	EventBeforeReset = raw.EventBeforeReset
-	EventAfterReset = raw.EventAfterReset
+	EventAfterDelete  = raw.EventAfterDelete
+	EventBeforeReset  = raw.EventBeforeReset
+	EventAfterReset   = raw.EventAfterReset
 )
 
-type RawEventData = raw.EventData
-type RawEventCallback = raw.EventCallback
-
-type ObjectEventData = object.EventData
-type ObjectEventCallback = object.EventCallback
+type (
+	RawEventCallback    = raw.EventCallback
+	ObjectEventCallback = object.EventCallback
+)

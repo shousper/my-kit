@@ -1,10 +1,11 @@
-package raw_test
+package local_test
 
 import (
 	"testing"
 
-	"my-kit/store/raw"
-	"my-kit/store/raw/test"
+	"github.com/shousper/my-kit/store/raw"
+	"github.com/shousper/my-kit/store/raw/local"
+	"github.com/shousper/my-kit/store/raw/test"
 )
 
 /*
@@ -41,9 +42,9 @@ BenchmarkNewConcurrentMapStore/Iterate_1000000/1024-4         	      10	 1700992
 func BenchmarkNewConcurrentMapStore(b *testing.B) {
 	//b.SkipNow()
 
-	test.Benchmark(b, func() raw.Store { return raw.NewConcurrentMapStore() })
+	test.Benchmark(b, func() raw.Store { return local.NewConcurrentMapStore() })
 }
 
 func TestNewConcurrentMapStore(t *testing.T) {
-	test.GCStress(t, func() raw.Store { return raw.NewConcurrentMapStore() })
+	test.GCStress(t, func() raw.Store { return local.NewConcurrentMapStore() })
 }

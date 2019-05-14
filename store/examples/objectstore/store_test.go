@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/shousper/my-kit/store/examples/objectstore"
 	"github.com/stretchr/testify/assert"
-	"my-kit/store/examples/objectstore"
 )
 
 func TestItemStore(t *testing.T) {

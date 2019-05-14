@@ -1,25 +1,27 @@
-package raw
+package local
 
 import (
 	"sync"
+
+	"github.com/shousper/my-kit/store/raw"
 )
 
 type DefaultStore struct {
 	mu sync.RWMutex
-	m map[string][]byte
+	m  map[string]raw.Value
 }
 
-var _ Store = (*DefaultStore)(nil)
+var _ raw.Store = (*DefaultStore)(nil)
 
 func NewDefaultStore() *DefaultStore {
 	return &DefaultStore{
-		m: make(map[string][]byte),
+		m: make(map[string]raw.Value),
 	}
 }
 
-func (s *DefaultStore) Get(key string) ([]byte, error) {
+func (s *DefaultStore) Get(key string) (raw.Value, error) {
 	if key == "" {
-		return nil, ErrInvalidKey
+		return nil, raw.ErrInvalidKey
 	}
 
 	s.mu.RLock()
@@ -27,14 +29,16 @@ func (s *DefaultStore) Get(key string) ([]byte, error) {
 	if v, ok := s.m[key]; ok {
 		return v, nil
 	}
-	return nil, ErrNotFound
+	return nil, raw.ErrNotFound
 }
 
-func (s *DefaultStore) Set(key string, in []byte) error {
+func (s *DefaultStore) Set(key string, in raw.Value) error {
 	if key == "" {
-		return ErrInvalidKey
+		return raw.ErrInvalidKey
 	}
-
+	if in == nil {
+		return raw.ErrInvalidValue
+	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.m[key] = in
@@ -43,7 +47,7 @@ func (s *DefaultStore) Set(key string, in []byte) error {
 
 func (s *DefaultStore) Delete(key string) error {
 	if key == "" {
-		return ErrInvalidKey
+		return raw.ErrInvalidKey
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -51,20 +55,26 @@ func (s *DefaultStore) Delete(key string) error {
 	return nil
 }
 
-func (s *DefaultStore) Iterate(fn IteratorFunc) error {
+func (s *DefaultStore) Keys() ([]string, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	for k, v := range s.m {
-		done, err := fn(k, v)
-		if err != nil {
-			return err
-		}
 
-		if done {
-			return nil
-		}
+	out := make([]string, len(s.m))
+	i := 0
+	for key := range s.m {
+		out[i] = key
+		i++
 	}
-	return nil
+	return out, nil
+}
+
+func (s *DefaultStore) Iterate() raw.Iterator {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	return &raw.DefaultIterator{
+		Store: s,
+	}
 }
 
 func (s *DefaultStore) Close() error {
@@ -74,7 +84,7 @@ func (s *DefaultStore) Close() error {
 func (s *DefaultStore) Reset() error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	s.m = make(map[string][]byte)
+	s.m = make(map[string]raw.Value)
 	return nil
 }
 

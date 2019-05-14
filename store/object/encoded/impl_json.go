@@ -1,8 +1,8 @@
-package object
+package encoded
 
 import (
 	"encoding/json"
-	"my-kit/store/raw"
+	"github.com/shousper/my-kit/store/raw"
 )
 
 func NewJSONStore(store raw.Store) *DefaultStore {

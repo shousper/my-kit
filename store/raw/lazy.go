@@ -3,19 +3,19 @@ package raw
 type LazyStore struct {
 	Store
 
-	getter func(key string) ([]byte, error)
+	getter func(key string) (Value, error)
 }
 
 var _ Store = (*LazyStore)(nil)
 
-func NewLazyStore(store Store, getter func(key string) ([]byte, error)) *LazyStore {
+func NewLazyStore(store Store, getter func(key string) (Value, error)) *LazyStore {
 	return &LazyStore{
 		Store:  store,
 		getter: getter,
 	}
 }
 
-func (s *LazyStore) Get(key string) ([]byte, error) {
+func (s *LazyStore) Get(key string) (Value, error) {
 	out, err := s.Store.Get(key)
 	if err == ErrNotFound {
 		entry, err := s.getter(key)
@@ -29,4 +29,3 @@ func (s *LazyStore) Get(key string) ([]byte, error) {
 	}
 	return out, err
 }
-

@@ -13,7 +13,7 @@ const (
 	EventAfterReset
 )
 
-type EventCallback func(key string, value []byte)
+type EventCallback func(key string, value Value)
 
 type EventedStore struct {
 	Store
@@ -35,13 +35,13 @@ func (s *EventedStore) On(event Event, fn EventCallback) {
 	s.callbacks[event] = append(s.callbacks[event], fn)
 }
 
-func (s *EventedStore) emit(event Event, key string, value []byte) {
+func (s *EventedStore) emit(event Event, key string, value Value) {
 	for _, fn := range s.callbacks[event] {
 		fn(key, value)
 	}
 }
 
-func (s *EventedStore) Get(key string) (out []byte, err error) {
+func (s *EventedStore) Get(key string) (out Value, err error) {
 	if key == "" {
 		return nil, ErrInvalidKey
 	}
@@ -50,7 +50,7 @@ func (s *EventedStore) Get(key string) (out []byte, err error) {
 	out, err = s.Store.Get(key)
 	return out, err
 }
-func (s *EventedStore) Set(key string, in []byte) error {
+func (s *EventedStore) Set(key string, in Value) error {
 	if key == "" {
 		return ErrInvalidKey
 	}

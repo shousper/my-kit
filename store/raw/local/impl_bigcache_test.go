@@ -1,11 +1,12 @@
-package raw_test
+package local_test
 
 import (
 	"testing"
 	"time"
 
-	"my-kit/store/raw"
-	"my-kit/store/raw/test"
+	"github.com/shousper/my-kit/store/raw"
+	"github.com/shousper/my-kit/store/raw/local"
+	"github.com/shousper/my-kit/store/raw/test"
 )
 
 /*
@@ -42,9 +43,9 @@ BenchmarkNewBigCacheStore/Iterate_1000000/1024-4        	  100000	     11981 ns/
 func BenchmarkNewBigCacheStore(b *testing.B) {
 	//b.SkipNow()
 
-	test.Benchmark(b, func() raw.Store { return raw.NewBigCacheStore(1 * time.Second) })
+	test.Benchmark(b, func() raw.Store { return local.NewBigCacheStore(1 * time.Second) })
 }
 
 func TestNewBigCacheStore(t *testing.T) {
-	test.GCStress(t, func() raw.Store { return raw.NewBigCacheStore(1 * time.Second) })
+	test.GCStress(t, func() raw.Store { return local.NewBigCacheStore(1 * time.Second) })
 }

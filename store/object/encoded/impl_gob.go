@@ -1,9 +1,10 @@
-package object
+package encoded
 
 import (
 	"bytes"
 	"encoding/gob"
-	"my-kit/store/raw"
+
+	"github.com/shousper/my-kit/store/raw"
 )
 
 func NewGobStore(store raw.Store) *DefaultStore {

@@ -2,15 +2,17 @@ package raw
 
 import "io"
 
-type IteratorFunc func(key string, value []byte) (bool, error)
+type Value []byte
 
+type IteratorFunc func(key string, value Value) (bool, error)
 
 type Store interface {
 	io.Closer
 
-	Iterate(fn IteratorFunc) error
-	Get(key string) ([]byte, error)
-	Set(key string, data []byte) error
+	Keys() ([]string, error)
+	Iterate() Iterator
+	Get(key string) (Value, error)
+	Set(key string, data Value) error
 	Delete(key string) error
 	Reset() error
 	Len() int

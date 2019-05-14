@@ -1,13 +1,15 @@
-package raw
+package local
 
 import (
 	"github.com/orcaman/concurrent-map"
+	"github.com/shousper/my-kit/store/raw"
 )
 
 type ConcurrentMapStore struct {
 	store cmap.ConcurrentMap
 }
-var _ Store = (*ConcurrentMapStore)(nil)
+
+var _ raw.Store = (*ConcurrentMapStore)(nil)
 
 func NewConcurrentMapStore() *ConcurrentMapStore {
 	return &ConcurrentMapStore{
@@ -19,22 +21,19 @@ func (s *ConcurrentMapStore) Close() error {
 	return nil
 }
 
-func (s *ConcurrentMapStore) Iterate(fn IteratorFunc) error {
-	s.store.IterCb(func(key string, v interface{}) {
-		_, _ = fn(key, v.([]byte))
-	})
-	return nil
+func (s *ConcurrentMapStore) Iterate() raw.Iterator {
+	return raw.NewIterator(s)
 }
 
-func (s *ConcurrentMapStore) Get(key string) ([]byte, error) {
+func (s *ConcurrentMapStore) Get(key string) (raw.Value, error) {
 	v, ok := s.store.Get(key)
 	if !ok {
-		return nil, ErrNotFound
+		return nil, raw.ErrNotFound
 	}
-	return v.([]byte), nil
+	return v.(raw.Value), nil
 }
 
-func (s *ConcurrentMapStore) Set(key string, data []byte) error {
+func (s *ConcurrentMapStore) Set(key string, data raw.Value) error {
 	s.store.Set(key, data)
 	return nil
 }
@@ -57,3 +56,6 @@ func (s *ConcurrentMapStore) Capacity() int {
 	return s.store.Count()
 }
 
+func (s *ConcurrentMapStore) Keys() ([]string, error) {
+	return s.store.Keys(), nil
+}
