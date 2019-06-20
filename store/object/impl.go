@@ -5,13 +5,13 @@ import (
 )
 
 type Marshaller func(v interface{}) ([]byte, error)
-type UnMarshaller func(data []byte, out interface{}) error
+type Unmarshaller func(data []byte, out interface{}) error
 
 type DefaultStore struct {
 	raw.Store
 
 	marshaller   Marshaller
-	unmarshaller UnMarshaller
+	unmarshaller Unmarshaller
 }
 
 var _ Store = (*DefaultStore)(nil)
@@ -19,7 +19,7 @@ var _ Store = (*DefaultStore)(nil)
 func NewStore(
 	store raw.Store,
 	marshaller Marshaller,
-	unmarshaller UnMarshaller,
+	unmarshaller Unmarshaller,
 ) *DefaultStore {
 	return &DefaultStore{
 		Store:        store,

@@ -6,15 +6,17 @@ import (
 )
 
 type BigCacheStore struct {
-	bigcache.BigCache
+	cache *bigcache.BigCache
 }
 
 var _ Store = (*BigCacheStore)(nil)
 
-func NewBigCacheStore() *BigCacheStore {
-	cache, _ := bigcache.NewBigCache(bigcache.DefaultConfig(10 * time.Minute))
+func NewBigCacheStore(eviction time.Duration) *BigCacheStore {
+	cfg := bigcache.DefaultConfig(eviction)
+	cfg.Verbose = false
+	cache, _ := bigcache.NewBigCache(cfg)
 	return &BigCacheStore{
-		BigCache: *cache,
+		cache,
 	}
 }
 
@@ -23,7 +25,7 @@ func (s *BigCacheStore) Get(key string) ([]byte, error) {
 		return nil, ErrInvalidKey
 	}
 
-	v, err := s.BigCache.Get(key)
+	v, err := s.cache.Get(key)
 	return v, s.normalizeError(err)
 }
 
@@ -31,7 +33,7 @@ func (s *BigCacheStore) Set(key string, in []byte) error {
 	if key == "" {
 		return ErrInvalidKey
 	}
-	err := s.BigCache.Set(key, in)
+	err := s.cache.Set(key, in)
 	return s.normalizeError(err)
 }
 
@@ -39,12 +41,12 @@ func (s *BigCacheStore) Delete(key string) error {
 	if key == "" {
 		return ErrInvalidKey
 	}
-	err := s.BigCache.Delete(key)
+	err := s.cache.Delete(key)
 	return s.normalizeError(err)
 }
 
 func (s *BigCacheStore) Iterate(fn IteratorFunc) error {
-	iterator := s.Iterator()
+	iterator := s.cache.Iterator()
 	for iterator.SetNext() {
 		entry, err := iterator.Value()
 		if err != nil {
@@ -61,6 +63,22 @@ func (s *BigCacheStore) Iterate(fn IteratorFunc) error {
 		}
 	}
 	return nil
+}
+
+func (s *BigCacheStore) Close() error {
+	return s.cache.Close()
+}
+
+func (s *BigCacheStore) Reset() error {
+	return s.cache.Reset()
+}
+
+func (s *BigCacheStore) Len() int {
+	return s.cache.Len()
+}
+
+func (s *BigCacheStore) Capacity() int {
+	return s.cache.Capacity()
 }
 
 func (s *BigCacheStore) normalizeError(err error) error {

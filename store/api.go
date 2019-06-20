@@ -17,7 +17,8 @@ var (
 
 	/* Feature wrappers */
 	NewLazyStore = raw.NewLazyStore
-	NewHookedStore = raw.NewHookedStore
+	NewEventedStore = raw.NewEventedStore
+	NewChanneledStore = raw.NewChanneledStore
 )
 
 type ObjectStore = object.Store
@@ -28,6 +29,26 @@ var (
 
 	/* Feature wrappers */
 	NewLazyObjectStore = object.NewLazyStore
-	NewHookedObjectStore = object.NewHookedStore
+	NewEventedObjectStore = object.NewEventedStore
+	NewChanneledObjectStore = object.NewChanneledStore
 	NewIndexedObjectStore = object.NewIndexedStore
 )
+
+type Event = raw.Event
+
+var (
+	EventBeforeGet = raw.EventBeforeGet
+	EventAfterGet = raw.EventAfterGet
+	EventBeforeSet = raw.EventBeforeSet
+	EventAfterSet = raw.EventAfterSet
+	EventBeforeDelete = raw.EventBeforeDelete
+	EventAfterDelete = raw.EventAfterDelete
+	EventBeforeReset = raw.EventBeforeReset
+	EventAfterReset = raw.EventAfterReset
+)
+
+type RawEventData = raw.EventData
+type RawEventCallback = raw.EventCallback
+
+type ObjectEventData = object.EventData
+type ObjectEventCallback = object.EventCallback
